@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.orange.clara.cloud</groupId>
+    <artifactId>cloud-plugins-management</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <scm>
+        <connection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git</connection>
+        <developerConnection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git</developerConnection>
+        <url>https://github.com/Orange-OpenSource/elpaaso-plugins-management</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>oss.snapshot.local</id>
+            <name>oss-snapshot-local repository</name>
+            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <!-- == Project env == -->
+        <project.build.java.version>1.8</project.build.java.version>
+        <project.build.sourceEncoding>ISO-8859-15</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- == Plugins versions == -->
+        <compiler-plugin.version>3.3</compiler-plugin.version>
+        <release-plugin.version>2.5.2</release-plugin.version>
+        <resources-plugin.version>2.7</resources-plugin.version>
+        <deploy-plugin.version>2.8.2</deploy-plugin.version>
+        <javadoc.plugin.version>2.9.1</javadoc.plugin.version>
+        <project-info-reports-plugin.version>2.7</project-info-reports-plugin.version>
+        <site.version>3.4</site.version>
+        <surefire.version>2.18.1</surefire.version>
+        <failsafe.version>${surefire.version}</failsafe.version>
+        <source-plugin.version>2.4</source-plugin.version>
+        <enforcer-plugin.version>1.4</enforcer-plugin.version>
+        <dependency-plugin.version>2.10</dependency-plugin.version>
+        <war-plugin.version>2.6</war-plugin.version>
+        <ear-plugin.version>2.10</ear-plugin.version>
+        <minify-plugin.version>1.5.2</minify-plugin.version>
+        <cf-plugin.version>1.1.1</cf-plugin.version>
+        <cxf.version>2.7.12</cxf.version>
+        <groovy.version>1.8.6</groovy.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                <groupId>org.cloudfoundry</groupId>
+                <artifactId>cf-maven-plugin</artifactId>
+                <version>${cf-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.samaxes.maven</groupId>
+                    <artifactId>minify-maven-plugin</artifactId>
+                    <version>1.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${release-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${resources-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <!-- this is required by 2.7, as workaround - https://jira.codehaus.org/browse/MSHARED-325 -->
+                            <groupId>org.apache.maven.shared</groupId>
+                            <artifactId>maven-filtering</artifactId>
+                            <version>1.3</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${project.build.java.version}</source>
+                        <target>${project.build.java.version}</target>
+                        <!-- "Since 3.0, the default compiler is javax.tools.JavaCompiler -->
+                        <!-- (if you are using java 1.6) and is used to compile Java sources. -->
+                        <!-- If you want to force the plugin using javac, you must configure -->
+                        <!-- the plugin option forceJavacCompilerUse." -->
+                        <!-- ElPaaso compilation failed if set to false with multitrhead -->
+                        <!-- compilation enabled (-T3). -->
+                        <!-- Try to disable it after switching to jdk 1.7 -->
+                        <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                        <!-- workaround maven compiler 3.1 bug which incorrectly recompiles some resources that have not changed See https://jira.codehaus.org/browse/MCOMPILER-209
+                            and http://stackoverflow.com/questions/17944108/maven-compiler-plugin-always-detecting-a-set-of-sources-as-stale -->
+                        <useIncrementalCompilation>false</useIncrementalCompilation>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
+                    <configuration>
+                        <testFailureIgnore>true</testFailureIgnore>
+                        <!-- enlever le commentaire pour debugger les tests surefire dans Eclipse, l'adresse 4000 doit correspondre au port de la connexion de la Remote java application
+                            dans le menu Open Debug Dialog -->
+                        <!-- <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4000,server=y,suspend=y</argLine> -->
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${surefire.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${failsafe.version}</version>
+                    <configuration>
+                        <!-- cette option est utilisee par le goal verify -->
+                        <testFailureIgnore>true</testFailureIgnore>
+                        <!-- enlever le commentaire pour debugger les tests surefire dans Eclipse, l'adresse 4000 doit correspondre au port de la connexion de la Remote java application
+                            dans le menu Open Debug Dialog -->
+                        <!-- <argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=4000,server=y,suspend=y</argLine> -->
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${surefire.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <!-- Used for code coverage <plugin> <groupId>org.jacoco</groupId> <artifactId>jacoco-maven-plugin</artifactId> <version>0.6.0.201210061924</version> </plugin> -->
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${war-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${deploy-plugin.version}</version>
+                    <configuration>
+                        <retryFailedDeploymentCount>10</retryFailedDeploymentCount>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-ear-plugin</artifactId>
+                    <version>${ear-plugin.version}</version>
+                    <configuration>
+                        <version>1.4</version>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-codegen-plugin</artifactId>
+                    <version>${cxf.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-java2ws-plugin</artifactId>
+                    <version>${cxf.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.9</version>
+                    <configuration>
+                        <downloadSources>true</downloadSources>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${site.version}</version>
+                    <configuration>
+                        <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+                        <outputEncoding>${project.reporting.outputEncoding}</outputEncoding>
+                    </configuration>
+                    <dependencies>
+                        <dependency><!-- add support for ssh/scp/sftp -->
+                            <groupId>org.apache.maven.wagon</groupId>
+                            <artifactId>wagon-ssh</artifactId>
+                            <version>2.4</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>${project-info-reports-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <!-- This definition is used to generate standalone javadocs -->
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${javadoc.plugin.version}</version>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>aggregate</id>
+                            <goals>
+                                <goal>aggregate</goal>
+                            </goals>
+                            <!-- <phase>site</phase> -->
+                            <configuration>
+                                <encoding>${project.reporting.outputEncoding}</encoding>
+                                <javadocVersion>${project.build.java.version}</javadocVersion>
+                                <stylesheet>maven</stylesheet>
+                                <reportSets>
+                                    <reportSet>
+                                        <id>non-aggregate</id>
+                                        <reports>
+                                            <report>javadoc</report>
+                                        </reports>
+                                    </reportSet>
+                                    <reportSet>
+                                        <id>aggregate</id>
+                                        <reports>
+                                            <report>aggregate</report>
+                                        </reports>
+                                    </reportSet>
+                                </reportSets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>1.1.4</version>
+                    <!-- ToDo -->
+                    <!-- Before updating check impact (deployable aren't inlude in deployer anymore) <version>1.4.2</version> -->
+                </plugin>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-rar-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>3.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>keytool-maven-plugin</artifactId>
+                    <version>1.5</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <fail>true</fail>
+                        <rules>
+                            <!--<DependencyConvergence/>-->
+                            <requireJavaVersion>
+                                <version>[1.8.0,)</version>
+                                <!-- should be at least 1.8.0 -->
+                            </requireJavaVersion>
+                        </rules>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${dependency-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>analyze-dep-mgt</goal>
+                            </goals>
+                            <phase>verify</phase>
+                            <configuration>
+                                <failBuild>false</failBuild>
+                                <ignoreDirect>false</ignoreDirect>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <!-- The gmavenplus plugin is used to compile Groovy code. To learn more about this plugin,
+                    visit https://github.com/groovy/GMavenPlus/wiki -->
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+                <!-- Needed with Eclipse Indigo / m2e 1.0 because there are no m2e connectors for cxf-codegen-plugin for the moment -->
+                <!-- See http://wiki.eclipse.org/M2E_plugin_execution_not_covered -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.apache.cxf
+                                        </groupId>
+                                        <artifactId>
+                                            cxf-codegen-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [2.2.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>wsdl2java</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>keytool-maven-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>clean</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>keytool-maven-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>genkey</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>build-helper-maven-plugin</artifactId>
+                                        <versionRange>[1.5,)</versionRange>
+                                        <goals>
+                                            <goal>reserve-network-port</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-antrun-plugin</artifactId>
+                                        <versionRange>[1.6,)</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[2.3,)</versionRange>
+                                        <goals>
+                                            <goal>unpack</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.sun.tools.xjc.maven2</groupId>
+                                        <artifactId>maven-jaxb-plugin</artifactId>
+                                        <versionRange>[1.1.1,)</versionRange>
+                                        <goals>
+                                            <goal>generate</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <!-- Assure que la version indiquée en dependencyManagement n'est pas surchargé dans un module -->
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <!-- This definition is used to generate javadocs during site generation -->
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc.plugin.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>
