@@ -25,7 +25,8 @@
 
     <scm>
         <connection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git</connection>
-        <developerConnection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git
+        </developerConnection>
         <url>https://github.com/Orange-OpenSource/elpaaso-plugins-management</url>
     </scm>
 
@@ -68,9 +69,9 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                <groupId>org.cloudfoundry</groupId>
-                <artifactId>cf-maven-plugin</artifactId>
-                <version>${cf-plugin.version}</version>
+                    <groupId>org.cloudfoundry</groupId>
+                    <artifactId>cf-maven-plugin</artifactId>
+                    <version>${cf-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.samaxes.maven</groupId>
@@ -339,123 +340,14 @@
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>1.4</version>
                 </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-                <!-- Needed with Eclipse Indigo / m2e 1.0 because there are no m2e connectors for cxf-codegen-plugin for the moment -->
-                <!-- See http://wiki.eclipse.org/M2E_plugin_execution_not_covered -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>
-                                            org.apache.cxf
-                                        </groupId>
-                                        <artifactId>
-                                            cxf-codegen-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [2.2.1,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>wsdl2java</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>keytool-maven-plugin</artifactId>
-                                        <versionRange>[1.0,)</versionRange>
-                                        <goals>
-                                            <goal>clean</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>keytool-maven-plugin</artifactId>
-                                        <versionRange>[1.0,)</versionRange>
-                                        <goals>
-                                            <goal>genkey</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>build-helper-maven-plugin</artifactId>
-                                        <versionRange>[1.5,)</versionRange>
-                                        <goals>
-                                            <goal>reserve-network-port</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-antrun-plugin</artifactId>
-                                        <versionRange>[1.6,)</versionRange>
-                                        <goals>
-                                            <goal>run</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-dependency-plugin</artifactId>
-                                        <versionRange>[2.3,)</versionRange>
-                                        <goals>
-                                            <goal>unpack</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>com.sun.tools.xjc.maven2</groupId>
-                                        <artifactId>maven-jaxb-plugin</artifactId>
-                                        <versionRange>[1.1.1,)</versionRange>
-                                        <goals>
-                                            <goal>generate</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute/>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>2.11</version>
                     <configuration>
-                        <header>https://raw.githubusercontent.com/Orange-OpenSource/elpaaso/master/src/license/apache-2-custom-header.txt</header>
+                        <header>
+                            https://raw.githubusercontent.com/Orange-OpenSource/elpaaso/master/src/license/apache-2-custom-header.txt
+                        </header>
                         <properties>
                             <owner>Orange</owner>
                             <project.inceptionYear>2015</project.inceptionYear>
@@ -562,6 +454,146 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
+        <profile>
+            <id>eclipse-only</id>
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+                        <!-- Needed with Eclipse Indigo / m2e 1.0 because there are no m2e connectors for cxf-codegen-plugin for the moment -->
+                        <!-- See http://wiki.eclipse.org/M2E_plugin_execution_not_covered -->
+                        <plugin>
+                            <groupId>org.eclipse.m2e</groupId>
+                            <artifactId>lifecycle-mapping</artifactId>
+                            <version>1.0.0</version>
+                            <configuration>
+                                <lifecycleMappingMetadata>
+                                    <pluginExecutions>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>
+                                                    org.apache.cxf
+                                                </groupId>
+                                                <artifactId>
+                                                    cxf-codegen-plugin
+                                                </artifactId>
+                                                <versionRange>
+                                                    [2.2.1,)
+                                                </versionRange>
+                                                <goals>
+                                                    <goal>wsdl2java</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>keytool-maven-plugin</artifactId>
+                                                <versionRange>[1.0,)</versionRange>
+                                                <goals>
+                                                    <goal>clean</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>keytool-maven-plugin</artifactId>
+                                                <versionRange>[1.0,)</versionRange>
+                                                <goals>
+                                                    <goal>genkey</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.codehaus.mojo</groupId>
+                                                <artifactId>build-helper-maven-plugin</artifactId>
+                                                <versionRange>[1.5,)</versionRange>
+                                                <goals>
+                                                    <goal>reserve-network-port</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-antrun-plugin</artifactId>
+                                                <versionRange>[1.6,)</versionRange>
+                                                <goals>
+                                                    <goal>run</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.apache.maven.plugins</groupId>
+                                                <artifactId>maven-dependency-plugin</artifactId>
+                                                <versionRange>[2.3,)</versionRange>
+                                                <goals>
+                                                    <goal>unpack</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>com.sun.tools.xjc.maven2</groupId>
+                                                <artifactId>maven-jaxb-plugin</artifactId>
+                                                <versionRange>[1.1.1,)</versionRange>
+                                                <goals>
+                                                    <goal>generate</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute/>
+                                            </action>
+                                        </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.codehaus.gmavenplus</groupId>
+                                                <artifactId>gmavenplus-plugin</artifactId>
+                                                <versionRange>
+                                                    [1.4,)
+                                                </versionRange>
+                                                <goals>
+                                                    <goal>testCompile</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <execute/>
+                                            </action>
+                                        </pluginExecution>
 
+                                    </pluginExecutions>
+                                </lifecycleMappingMetadata>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
