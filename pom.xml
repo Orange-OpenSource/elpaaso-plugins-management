@@ -29,6 +29,11 @@
         </developerConnection>
         <url>https://github.com/Orange-OpenSource/elpaaso-plugins-management</url>
     </scm>
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/Orange-OpenSource/elpaaso-plugins-management</url>
+    </ciManagement>
+
 
     <distributionManagement>
         <snapshotRepository>
