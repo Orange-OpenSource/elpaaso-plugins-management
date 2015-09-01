@@ -8,6 +8,7 @@ env:
 install:
 -
 script:
+  - chmod ugo+x bin/*.sh
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./bin/build.sh || false'
   # don't deploy on pull request
   - '[ "${TRAVIS_PULL_REQUEST}" != "false" ] && mvn verify --settings settings.xml || true'
