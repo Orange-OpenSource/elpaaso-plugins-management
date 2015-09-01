@@ -19,10 +19,12 @@ then
 	mvn deploy --settings settings.xml
 
 	#We are on master, prepare a branch as release candidate
-	version_snapshot=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
-	version_prefix=$(expr $version_snapshot : "\(.*\)-SNAP.*")
+	export version_snapshot=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
+	echo "Current version extracted from pom.xml: $version_snapshot"
+	export version_prefix=$(expr $version_snapshot : "\(.*\)-SNAP.*")
 
 	export RELEASE_CANDIDATE_VERSION=$version_prefix.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
+	echo "Release candidate vesrion: $RELEASE_CANDIDATE_VERSION"
 
 	export repo_name=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 	export BRANCH_PATH=release-candidate/$repo_name
