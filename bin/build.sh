@@ -20,11 +20,11 @@ then
 
 	#We are on master, prepare a branch as release candidate
 	version_snapshot=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
-	version_prefix=`expr $version_snapshot : "\(.*\)-SNAP.*"`
+	version_prefix=$(expr $version_snapshot : "\(.*\)-SNAP.*")
 
 	export RELEASE_CANDIDATE_VERSION=$version_prefix.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
 
-	export repo_name=`expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)"`
+	export repo_name=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 	export BRANCH_PATH=release-candidate/$repo_name
 
 	export BRANCH_NAME=$repo_name-$RELEASE_CANDIDATE_VERSION
