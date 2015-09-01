@@ -447,8 +447,8 @@
                                     <contextUrl>https://oss.jfrog.org</contextUrl>
                                     <username>${env.BINTRAY_USER}</username>
                                     <password>${env.BINTRAY_PASSWORD}</password>
-                                    <repoKey>oss.release.local</repoKey>
-                                    <snapshotRepoKey>oss.snapshot.local</snapshotRepoKey>
+                                    <repoKey>oss-release-local</repoKey>
+                                    <snapshotRepoKey>oss-snapshot-local</snapshotRepoKey>
                                 </publisher>
                                 <buildInfo>
                                     <buildName>${project.artifactId}</buildName>
