@@ -8,6 +8,6 @@ env:
 install:
 -
 script:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && mvn deploy --settings settings.xml || false'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./bin/build.sh || false'
   # don't deploy on pull request
   - '[ "${TRAVIS_PULL_REQUEST}" != "false" ] && mvn verify --settings settings.xml || true'
