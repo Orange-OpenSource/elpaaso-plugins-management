@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.orange.clara.cloud</groupId>
-    <artifactId>cloud-plugins-management</artifactId>
+    <artifactId>elpaaso-plugins-management</artifactId>
     <version>3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
