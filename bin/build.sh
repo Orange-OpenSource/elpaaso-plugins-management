@@ -14,7 +14,7 @@
 
 set -ev
 
-if [ "${TRAVIS_PULL_REQUEST}" = "false" && "$TRAVIS_BRANCH" = "master" ]
+if [ "${TRAVIS_PULL_REQUEST}" = "false" -a "$TRAVIS_BRANCH" = "master" ]
 then
 	mvn deploy --settings settings.xml
 
@@ -22,14 +22,15 @@ then
 	version_snapshot=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
 	version_prefix=`expr $version_snapshot : "\(.*\)-SNAP.*"`
 
-	export RELEASE_CANDIDATE_VERSION=$pom_version.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
+	export RELEASE_CANDIDATE_VERSION=$version_prefix.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
 
 	export repo_name=`expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)"`
 	export BRANCH_PATH=release-candidate/$repo_name
 
 	export BRANCH_NAME=$repo_name-$RELEASE_CANDIDATE_VERSION
+	export NEW_BRANCH_NAME=release-candidate/$BRANCH_NAME
 
-	git checkout -b release-candidate/$TAG_NAME
+	git checkout -b $NEW_BRANCH_NAME
 
 	mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
@@ -37,7 +38,8 @@ then
 	git branch
 	git remote -v
 
-	git commit -a -m "New release candidate release-candidate/$BRANCH_NAME"
+	git commit -a -m "New release candidate $NEW_BRANCH_NAME"
+	git push origin $NEW_BRANCH_NAME
 
 else
 	mvn deploy --settings settings.xml
