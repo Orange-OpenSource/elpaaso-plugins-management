@@ -29,8 +29,10 @@ then
 
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 
+	echo "Setting new version (old:$VERSION_SNAPSHOT):"
 	mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
+	echo "Compiling and deploying to OSS Jfrog"
 	mvn deploy --settings settings.xml
 
 	JFROG_PROMOTION_URL=http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
@@ -38,5 +40,5 @@ then
 	curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} $JFROG_PROMOTION_URL
 
 else
-	mvn deploy --settings settings.xml
+	mvn install --settings settings.xml
 fi
