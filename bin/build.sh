@@ -31,9 +31,9 @@ then
 
 	#mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
-	# mvn deploy --settings settings.xml
+	mvn deploy --settings settings.xml
 
-	# curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
+	curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
 
 else
 	mvn deploy --settings settings.xml
