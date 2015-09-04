@@ -29,9 +29,9 @@ then
 
 	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION - Extracted repo name: $REPO_NAME"
 
-	echo "Setting new version (old:$VERSION_SNAPSHOT):"
+	echo "Setting new version (old:$VERSION_SNAPSHOT)"
 
-	mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
+	MVN_RESULT=$(mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true)
 
 	echo "Compiling and deploying to OSS Jfrog"
 
