@@ -16,32 +16,24 @@ set -ev
 
 if [ "${TRAVIS_PULL_REQUEST}" = "false" -a "$TRAVIS_BRANCH" = "master" ]
 then
-	mvn deploy --settings settings.xml
+	#We are on master without PR
+	export VERSION_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
+	echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT"
+	export VERSION_PREFIX=$(expr $VERSION_SNAPSHOT : "\(.*\)-SNAP.*")
 
-	#We are on master, prepare a branch as release candidate
-	export version_snapshot=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
-	echo "Current version extracted from pom.xml: $version_snapshot"
-	export version_prefix=$(expr $version_snapshot : "\(.*\)-SNAP.*")
+	export GIT_SHORT_ID=${TRAVIS_COMMIT:0:7}
 
-	export RELEASE_CANDIDATE_VERSION=$version_prefix.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
-	echo "Release candidate vesrion: $RELEASE_CANDIDATE_VERSION"
 
-	export repo_name=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
-	export BRANCH_PATH=release-candidate/$repo_name
+	export RELEASE_CANDIDATE_VERSION=$VERSION_PREFIX.${GIT_SHORT_ID}-SNAPSHOT
+	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION"
 
-	export BRANCH_NAME=$repo_name-$RELEASE_CANDIDATE_VERSION
-	export NEW_BRANCH_NAME=release-candidate/$BRANCH_NAME
-
-	git checkout -b $NEW_BRANCH_NAME
+	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 
 	mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
-	git status
-	git branch
-	git remote -v
+	mvn deploy --settings settings.xml
 
-	git commit -a -m "New release candidate $NEW_BRANCH_NAME"
-	git push origin $NEW_BRANCH_NAME
+	curl -X POST -u ${env.BINTRAY_USER}:${env.BINTRAY_PASSWORD} http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
 
 else
 	mvn deploy --settings settings.xml
