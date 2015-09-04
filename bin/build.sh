@@ -23,20 +23,24 @@ then
 
 	export GIT_SHORT_ID=${TRAVIS_COMMIT:0:7}
 
-
 	export RELEASE_CANDIDATE_VERSION=$VERSION_PREFIX.${GIT_SHORT_ID}-SNAPSHOT
-	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION"
 
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 
+	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION - Extracted repo name: $REPO_NAME"
+
 	echo "Setting new version (old:$VERSION_SNAPSHOT):"
+
 	mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
 	echo "Compiling and deploying to OSS Jfrog"
+
 	mvn deploy --settings settings.xml
 
 	JFROG_PROMOTION_URL=http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
+
 	echo "Promotion URL to use: $JFROG_PROMOTION_URL"
+
 	curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} $JFROG_PROMOTION_URL
 
 else
