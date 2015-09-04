@@ -19,7 +19,7 @@ then
 	#We are on master without PR
 	export VERSION_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
 	echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT"
-	export VERSION_PREFIX=$(expr $VERSION_SNAPSHOT : "\(.*\)-SNAP.*")
+	export VERSION_PREFIX=$(expr "$VERSION_SNAPSHOT" : "\(.*\)-SNAP.*")
 
 	export GIT_SHORT_ID=${TRAVIS_COMMIT:0:7}
 
@@ -29,11 +29,11 @@ then
 
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 
-	mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
+	#mvn versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
-	mvn deploy --settings settings.xml
+	# mvn deploy --settings settings.xml
 
-	curl -X POST -u ${env.BINTRAY_USER}:${env.BINTRAY_PASSWORD} http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
+	# curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
 
 else
 	mvn deploy --settings settings.xml
