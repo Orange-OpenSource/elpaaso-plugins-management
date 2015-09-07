@@ -37,7 +37,7 @@ then
 
 	mvn versions:help
 
-	mvn -X versions:set -DnewVersion=${env.RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
+	mvn -X versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 #
 #	echo "Compiling and deploying to OSS Jfrog"
 #
