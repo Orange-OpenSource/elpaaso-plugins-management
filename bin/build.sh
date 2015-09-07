@@ -16,7 +16,7 @@
 set -ev
 echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>"
 #We are on master without PR
-export VERSION_SNAPSHOT=$(mvn -q help:evaluate -Dexpression=project.version |grep '^[0-9].*')
+export VERSION_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
 echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT"
 export VERSION_PREFIX=$(expr "$VERSION_SNAPSHOT" : "\(.*\)-SNAP.*")
 
@@ -29,10 +29,10 @@ then
 	echo "Setting new version old: $VERSION_SNAPSHOT"
 
 	ls -lrt
-	mvn -q -X versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
+	mvn -q versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 	echo "Compiling and deploying to OSS Jfrog"
 
-	mvn deploy --settings settings.xml
+	mvn -q deploy --settings settings.xml
 
 	export TAG_NAME="releases/$RELEASE_CANDIDATE_VERSION"
 	export TAG_DESC="Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER - $GIT_TAGNAME. [ ![Download](https://api.bintray.com/packages/elpaaso/maven/elpaaso-plugins-management/images/download.svg) ](https://bintray.com/elpaaso/maven/elpaaso-plugins-management/)"
