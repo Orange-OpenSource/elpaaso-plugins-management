@@ -28,7 +28,8 @@ then
 	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION"
 	echo "Setting new version old: $VERSION_SNAPSHOT"
 
-	mvn versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
+	ls -lrt
+	mvn -X versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 	echo "Compiling and deploying to OSS Jfrog"
 
 	mvn deploy --settings settings.xml
