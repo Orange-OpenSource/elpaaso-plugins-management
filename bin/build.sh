@@ -25,7 +25,7 @@ if [ "$TRAVIS_BRANCH" = "master" ]
 then
 	export RELEASE_CANDIDATE_VERSION=$VERSION_PREFIX.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
 
-	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION - Extracted repo name: $REPO_NAME"
+	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION"
 	echo "Setting new version old: $VERSION_SNAPSHOT"
 
 	mvn versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
