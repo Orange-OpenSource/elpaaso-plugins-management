@@ -35,7 +35,9 @@ then
 
 	ls -lrt
 
-	mvn -q -X clean versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
+	mvn -q versions:help
+
+	mvn -q -X versions:set -DnewVersion=$RELEASE_CANDIDATE_VERSION -DgenerateBackupPoms=false -DallowSnapshots=true
 
 	echo "Compiling and deploying to OSS Jfrog"
 
