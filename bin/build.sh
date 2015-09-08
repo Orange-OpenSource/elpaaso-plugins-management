@@ -58,3 +58,5 @@ then
 else
 	mvn install --settings settings.xml
 fi
+
+echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV"
