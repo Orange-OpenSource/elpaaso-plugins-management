@@ -20,6 +20,9 @@ echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV" |tee -a info.txt
 echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>" |tee -a info.txt
 #We are on master without PR
 
+#Download dependencies
+mvn -q help:evaluate -Dexpression=project.version
+# Capture execution of maven command - It looks like grep cannot be used like this on travis
 export VERSION_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
 
 echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT" |tee -a info.txt
@@ -34,7 +37,7 @@ then
 
 	echo "Setting new version old: $VERSION_SNAPSHOT" |tee -a info.txt
 
-	mvn -X -e versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
+	mvn -e versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 
 	echo "Compiling and deploying to OSS Jfrog" |tee -a info.txt
 
