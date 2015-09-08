@@ -17,10 +17,11 @@ then
 	RELEASE_CANDIDATE_VERSION=$(cat RELEASE_CANDIDATE_VERSION)
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 	export TAG_NAME="releases/$RELEASE_CANDIDATE_VERSION"
-
-	export TAG_DESC="Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER - $TAG_NAME. [ ![Download](https://api.bintray.com/packages/elpaaso/maven/elpaaso-plugins-management/images/download.svg) ](https://bintray.com/elpaaso/maven/$REPO_NAME/)"
+	echo "TAG_NAME: $TAG_NAME"
+	export TAG_DESC="Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER - $TAG_NAME. [ ![Download](https://api.bintray.com/packages/elpaaso/maven/$REPO_NAME/images/download.svg) ](https://bintray.com/elpaaso/maven/$REPO_NAME/)"
 	export RELEASE_NAME=$(expr "$RELEASE_CANDIDATE_VERSION" : "\(.*\)-SNAP.*")
-	curl --silent -X POST --data '{"tag_name":"' $TAG_NAME'","target_commitish":"master","name":"'$RELEASE_NAME'","body":"'$TAG_DESC'","draft": true,"prerelease": true}' https://$GH_TAGPERM@api.github.com/repos/Orange-OpenSource/$REPO_NAME/releases
+	export $GITHUB_DATA=\''{"tag_name":"'$TAG_NAME'","target_commitish":"master","name":"'$RELEASE_NAME'","body":"'$TAG_DESC'","draft": true,"prerelease": true}'\'
+	curl --silent -X POST --data $GITHUB_DATA https://$GH_TAGPERM@api.github.com/repos/Orange-OpenSource/$REPO_NAME/releases
 	echo "Extracted Travis repo name: $REPO_NAME"
 
 	JFROG_PROMOTION_URL=http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
