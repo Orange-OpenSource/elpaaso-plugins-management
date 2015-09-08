@@ -15,6 +15,6 @@ branches:
     - /^releases.*$/
 script:
   - chmod ugo+x bin/*.sh
-  - docker run -it -v $(pwd):/root/sources -e TRAVIS_BRANCH -e TRAVIS_TAG -e TRAVIS_PULL_REQUEST -e TRAVIS_BUILD_NUMBER -e TRAVIS_REPO_SLUG -w /root/sources maven:3.3.3-jdk-8 bin/build.sh
+  - docker run -it -v $(pwd):/root/sources -e BINTRAY_USER -e BINTRAY_PASSWORD -e TRAVIS_BRANCH -e TRAVIS_TAG -e TRAVIS_PULL_REQUEST -e TRAVIS_BUILD_NUMBER -e TRAVIS_REPO_SLUG -w /root/sources maven:3.3.3-jdk-8 bin/build.sh
 after_success:
   - bin/release.sh
