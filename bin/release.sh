@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 if [ "${TRAVIS_PULL_REQUEST}" = "false" -a "$TRAVIS_BRANCH" = "master" ]
 then
 	RELEASE_CANDIDATE_VERSION=$(cat RELEASE_CANDIDATE_VERSION)
