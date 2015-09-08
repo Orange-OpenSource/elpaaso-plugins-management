@@ -17,3 +17,4 @@ script:
   - chmod ugo+x bin/*.sh
   - docker run -it -v $(pwd):/root/sources -e TRAVIS_BRANCH -e TRAVIS_TAG -e TRAVIS_PULL_REQUEST -e TRAVIS_BUILD_NUMBER -e TRAVIS_REPO_SLUG -e DUMMY_SECURED_ENV -w /root/sources maven:3.3.3-jdk-8 bin/build.sh
   - echo 'Secured var dump in travis.yml: $DUMMY_SECURED_ENV'
+  - cat info.txt

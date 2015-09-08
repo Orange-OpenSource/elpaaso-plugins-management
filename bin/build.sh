@@ -15,14 +15,14 @@
 
 set -ev
 
-echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV"
+echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV" |tee -a info.txt
 
-echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>"
+echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>" |tee -a info.txt
 #We are on master without PR
 
 export VERSION_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
 
-echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT"
+echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT" |tee -a info.txt
 
 export VERSION_PREFIX=$(expr "$VERSION_SNAPSHOT" : "\(.*\)-SNAP.*")
 
@@ -30,13 +30,13 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" -a "$TRAVIS_BRANCH" = "master" ]
 then
 	export RELEASE_CANDIDATE_VERSION=$VERSION_PREFIX.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
 
-	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION"
+	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION" |tee -a info.txt
 
-	echo "Setting new version old: $VERSION_SNAPSHOT"
+	echo "Setting new version old: $VERSION_SNAPSHOT" |tee -a info.txt
 
 	mvn -X -e versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 
-	echo "Compiling and deploying to OSS Jfrog"
+	echo "Compiling and deploying to OSS Jfrog" |tee -a info.txt
 
 	mvn -e deploy --settings settings.xml
 
@@ -48,13 +48,13 @@ then
 
 	curl -X POST --data '{"tag_name":"' $TAG_NAME'","target_commitish":"master","name":"'$RELEASE_NAME'","body":"'$TAG_DESC'","draft": true,"prerelease": true}' https://$GH_TAGPERM@api.github.com/repos/Orange-OpenSource/elpaaso-plugins-management/releases
 
-	echo "Extracted Travis repo name: $REPO_NAME"
+	echo "Extracted Travis repo name: $REPO_NAME" |tee -a info.txt
 
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 
 	JFROG_PROMOTION_URL=http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
 
-	echo "Promotion URL to use: $JFROG_PROMOTION_URL"
+	echo "Promotion URL to use: $JFROG_PROMOTION_URL" |tee -a info.txt
 
 	curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} $JFROG_PROMOTION_URL
 else
