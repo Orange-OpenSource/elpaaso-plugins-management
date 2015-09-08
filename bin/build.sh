@@ -12,12 +12,9 @@
 # limitations under the License.
 #
 
-
 set -ev
 
-echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV" |tee -a info.txt
-
-echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>" |tee -a info.txt
+echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>"
 #We are on master without PR
 
 #Download dependencies
@@ -25,7 +22,7 @@ mvn -q help:evaluate -Dexpression=project.version
 # Capture execution of maven command - It looks like grep cannot be used like this on travis
 export VERSION_SNAPSHOT=$(mvn help:evaluate -Dexpression=project.version |grep '^[0-9].*')
 
-echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT" |tee -a info.txt
+echo "Current version extracted from pom.xml: $VERSION_SNAPSHOT"
 
 export VERSION_PREFIX=$(expr "$VERSION_SNAPSHOT" : "\(.*\)-SNAP.*")
 
@@ -33,14 +30,17 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" -a "$TRAVIS_BRANCH" = "master" ]
 then
 	export RELEASE_CANDIDATE_VERSION=$VERSION_PREFIX.${TRAVIS_BUILD_NUMBER}-SNAPSHOT
 
-	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION" |tee -a info.txt
+	echo "Release candidate version: $RELEASE_CANDIDATE_VERSION"
 
-	echo "Setting new version old: $VERSION_SNAPSHOT" |tee -a info.txt
+	echo "Setting new version old: $VERSION_SNAPSHOT"
 
+	#Download dependencies
+	mvn -q versions:help
 	mvn -e versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 
-	echo "Compiling and deploying to OSS Jfrog" |tee -a info.txt
+	echo "Compiling and deploying to OSS Jfrog"
 
+	mvn -q deploy:help
 	mvn -e deploy --settings settings.xml
 
 	export TAG_NAME="releases/$RELEASE_CANDIDATE_VERSION"
@@ -49,18 +49,19 @@ then
 
 	export RELEASE_NAME=$(expr "$RELEASE_CANDIDATE_VERSION" : "\(.*\)-SNAP.*")
 
-	curl -X POST --data '{"tag_name":"' $TAG_NAME'","target_commitish":"master","name":"'$RELEASE_NAME'","body":"'$TAG_DESC'","draft": true,"prerelease": true}' https://$GH_TAGPERM@api.github.com/repos/Orange-OpenSource/elpaaso-plugins-management/releases
+	curl --silent -X POST --data '{"tag_name":"' $TAG_NAME'","target_commitish":"master","name":"'$RELEASE_NAME'","body":"'$TAG_DESC'","draft": true,"prerelease": true}' https://$GH_TAGPERM@api.github.com/repos/Orange-OpenSource/elpaaso-plugins-management/releases
 
-	echo "Extracted Travis repo name: $REPO_NAME" |tee -a info.txt
+	echo "Extracted Travis repo name: $REPO_NAME"
 
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 
 	JFROG_PROMOTION_URL=http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
 
-	echo "Promotion URL to use: $JFROG_PROMOTION_URL" |tee -a info.txt
+	echo "Promotion URL to use: $JFROG_PROMOTION_URL"
 
-	curl -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} $JFROG_PROMOTION_URL
+	curl --silent -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} $JFROG_PROMOTION_URL
 else
+	mvn -q install:help
 	mvn install --settings settings.xml
 fi
 
