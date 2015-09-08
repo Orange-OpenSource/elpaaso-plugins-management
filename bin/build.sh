@@ -15,6 +15,8 @@
 
 set -ev
 
+echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV"
+
 echo "TRAVIS_BRANCH: <$TRAVIS_BRANCH> - TRAVIS_TAG: <$TRAVIS_TAG>"
 #We are on master without PR
 
@@ -32,11 +34,11 @@ then
 
 	echo "Setting new version old: $VERSION_SNAPSHOT"
 
-	mvn -X versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
+	mvn -X -e versions:set -DnewVersion=${RELEASE_CANDIDATE_VERSION} -DgenerateBackupPoms=false -DallowSnapshots=true
 
 	echo "Compiling and deploying to OSS Jfrog"
 
-	mvn clean deploy --settings settings.xml
+	mvn -e deploy --settings settings.xml
 
 	export TAG_NAME="releases/$RELEASE_CANDIDATE_VERSION"
 
@@ -59,4 +61,4 @@ else
 	mvn install --settings settings.xml
 fi
 
-echo "Secured var dump in build.sh: $DUMMY_SECURED_ENV"
+
