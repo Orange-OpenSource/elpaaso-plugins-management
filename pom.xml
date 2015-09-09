@@ -27,11 +27,11 @@
         <connection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git</connection>
         <developerConnection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git
         </developerConnection>
-        <url>https://github.com/Orange-OpenSource/elpaaso-plugins-management</url>
+        <url>https://github.com/Orange-OpenSource/${project.artifactId}</url>
     </scm>
     <ciManagement>
         <system>Travis</system>
-        <url>https://travis-ci.org/Orange-OpenSource/elpaaso-plugins-management</url>
+        <url>https://travis-ci.org/Orange-OpenSource/${project.artifactId}</url>
     </ciManagement>
 
 
@@ -71,7 +71,8 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-        <pluginRepository>            <id>jfrog-oss-snapshots</id>
+        <pluginRepository>
+            <id>jfrog-oss-snapshots</id>
             <name>JFrog OSS Snapshots</name>
             <url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
             <releases>
@@ -79,7 +80,8 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
-            </snapshots></pluginRepository>
+            </snapshots>
+        </pluginRepository>
 
     </pluginRepositories>
 
@@ -97,6 +99,9 @@
     </distributionManagement>
 
     <properties>
+        <license.header.url>
+            https://raw.githubusercontent.com/Orange-OpenSource/elpaaso/master/src/license/apache-2-custom-header.txt
+        </license.header.url>
         <!-- == Project env == -->
         <project.build.java.version>1.8</project.build.java.version>
         <project.build.sourceEncoding>ISO-8859-15</project.build.sourceEncoding>
@@ -404,7 +409,7 @@
                     <version>2.11</version>
                     <configuration>
                         <header>
-                            https://raw.githubusercontent.com/Orange-OpenSource/elpaaso/master/src/license/apache-2-custom-header.txt
+                            ${license.header.url}
                         </header>
                         <properties>
                             <owner>Orange</owner>
@@ -480,10 +485,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.jfrog.buildinfo</groupId>
-                <artifactId>artifactory-maven-plugin</artifactId>
-            </plugin>
+            <!--<plugin>-->
+            <!--<groupId>org.jfrog.buildinfo</groupId>-->
+            <!--<artifactId>artifactory-maven-plugin</artifactId>-->
+            <!--</plugin>-->
         </plugins>
     </build>
     <reporting>
@@ -698,6 +703,17 @@
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+        <profile>
+            <id>jenkins-orange</id>
+            <activation>
+                <property>
+                    <name>EBU_NET_DESK</name>
+                </property>
+            </activation>
+            <properties>
+                <license.header.url>${env.LICENSE_HEADER_URL}</license.header.url>
+            </properties>
         </profile>
     </profiles>
 </project>
