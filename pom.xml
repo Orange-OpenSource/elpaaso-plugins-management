@@ -27,7 +27,7 @@
         <connection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git</connection>
         <developerConnection>scm:git:https://github.com/Orange-OpenSource/elpaaso-plugins-management.git
         </developerConnection>
-        <url>https://github.com/Orange-OpenSource/${project.artifactId}</url>
+        <url>https://github.com/Orange-OpenSource/elpaaso-plugins-management</url>
     </scm>
     <ciManagement>
         <system>Travis</system>
