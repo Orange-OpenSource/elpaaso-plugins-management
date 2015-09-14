@@ -12,23 +12,25 @@
 # limitations under the License.
 #
 
+set -ev
+
 if [ "${TRAVIS_PULL_REQUEST}" = "false" -a "$TRAVIS_BRANCH" = "master" ]
 then
 	RELEASE_CANDIDATE_VERSION=$(cat RELEASE_CANDIDATE_VERSION)
 	export REPO_NAME=$(expr ${TRAVIS_REPO_SLUG} : ".*\/\(.*\)")
 	export TAG_NAME="releases/$RELEASE_CANDIDATE_VERSION"
-	echo "TAG_NAME: $TAG_NAME"
+	echo "TAG_NAME: $TAG_NAME\n"
 	export RELEASE_NAME=$(expr "$RELEASE_CANDIDATE_VERSION" : "\(.*\)-SNAP.*")
 	export TAG_DESC="Generated tag from TravisCI for build $TRAVIS_BUILD_NUMBER - $TAG_NAME. Binaries available as maven dependencies "'[ ![Set me Up !](https://img.shields.io/badge/JCenter Bintray-Set me Up !-orange.svg) ] (https://bintray.com/package/buildSettings?pkgPath=/elpaaso/maven/'"$REPO_NAME)and also here "'[ ![Download](https://img.shields.io/badge/Download-'$RELEASE_NAME'-blue.svg) ](https://bintray.com/elpaaso/maven/'"$REPO_NAME/$RELEASE_NAME/)"
 	export GITHUB_DATA='{"tag_name":"'$TAG_NAME'","target_commitish":"master","name":"'"$RELEASE_NAME"'","body":"'"$TAG_DESC"'","draft": true,"prerelease": true}'
 	curl --silent -X POST --data "$GITHUB_DATA" https://$GH_TAGPERM@api.github.com/repos/Orange-OpenSource/$REPO_NAME/releases
-	echo "Extracted Travis repo name: $REPO_NAME"
+	echo "Extracted Travis repo name: $REPO_NAME\n"
 
 	JFROG_PROMOTION_URL=http://oss.jfrog.org/api/plugins/build/promote/snapshotsToBintray/$REPO_NAME/${TRAVIS_BUILD_NUMBER}
-	echo "Promotion URL to use: $JFROG_PROMOTION_URL"
+	echo "Promotion URL to use: $JFROG_PROMOTION_URL\n"
 	curl --silent -X POST -u ${BINTRAY_USER}:${BINTRAY_PASSWORD} $JFROG_PROMOTION_URL
 
-	BINTRAY_URL="https://jcenter.bintray.com/com/orange/clara/cloud/$REPO_NAME/$RELEASE_CANDIDATE_VERSION/$REPO_NAME-$RELEASE_CANDIDATE_VERSION.pom"
-	echo "Checking release $RELEASE_CANDIDATE_VERSION is available at $BINTRAY_URL"
+	BINTRAY_URL="https://jcenter.bintray.com/com/orange/clara/cloud/$REPO_NAME/$RELEASE_NAME/$REPO_NAME-$RELEASE_NAME.jar"
+	echo "Checking release $RELEASE_NAME is available at $BINTRAY_URL\n"
 	wget $BINTRAY_URL
 fi
