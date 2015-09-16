@@ -33,6 +33,5 @@ then
 
 	BINTRAY_URL="https://jcenter.bintray.com/com/orange/clara/cloud/$REPO_NAME/$RELEASE_NAME/$REPO_NAME-$RELEASE_NAME.pom"
 	echo "Checking release $RELEASE_NAME is available at $BINTRAY_URL"
-
 	wget $BINTRAY_URL
 fi
