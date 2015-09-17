@@ -10,9 +10,9 @@ build overview
 ==
 
 
-![Alt text](http://g.gravizo.com/g?
+![Build overview schema](http://g.gravizo.com/g?
   digraph G {
-    aize ="4,4";
+    size ="4,4";
     github [shape=box];
     github -> travis [weight=8];
     travis -> OJO [label="mvn deploy"]
